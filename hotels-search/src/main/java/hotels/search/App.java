@@ -10,15 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
  *
  */
 
- @RestController
  @SpringBootApplication
  public class App 
 {
-    @RequestMapping("/")
-    public String home() {
-        return "Hello World! Congratulations, you have successfully started your Spring Boot application";
-    }
-
     public static void main( String[] args )
     {
         SpringApplication.run(App.class, args);
