@@ -1,0 +1,10 @@
+.vscode/
+user-service/target/
+
+*.class
+*.jar
+*.war
+*.ear
+.DS_Store
+*.iml
+*.log
