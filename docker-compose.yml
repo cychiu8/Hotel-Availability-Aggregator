@@ -24,6 +24,6 @@ services:
     depends_on:
       - db
     ports:
-      - "8081:8081"
+      - "8081:8080"
     volumes:
       - ./user-service/user-service/:/app
