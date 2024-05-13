@@ -1,20 +1,65 @@
 package hotels.search.service;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
+import hotels.search.model.SearchCondition;
 
 @Service
 public class JalanSearchService extends SearchAbstractService{
-    @Override
-    public String getSearchResult() {
 
-        String url = "https://www.jalan.net/020000/LRG_020200/?stayYear=2024&stayMonth=5&stayDay=12&stayCount=1&roomCount=1&adultNum=1&minPrice=0&maxPrice=999999&mealType=&kenCd=020000&lrgCd=020200&rootCd=04&distCd=01&roomCrack=100000&reShFlg=1&mvTabFlg=0&listId=0&screenId=UWW1402";
+    private final DestinationMappingService destinationMappingService;
+
+    public JalanSearchService(DestinationMappingService destinationMappingService) {
+        this.destinationMappingService = destinationMappingService;
+    }
+
+    @Override
+    public String getSearchResult(SearchCondition search) {
+
+        // String url = "https://www.jalan.net/020000/LRG_020200/?stayYear=2024&stayMonth=5&stayDay=12&stayCount=1&roomCount=1&adultNum=1&minPrice=0&maxPrice=999999&mealType=&kenCd=020000&lrgCd=020200&rootCd=04&distCd=01&roomCrack=100000&reShFlg=1&mvTabFlg=0&listId=0&screenId=UWW1402";
+        
+        String[] destinationCodes = destinationMappingService.getJalanDestinationCodes(search.getDest());
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate checkinDate = LocalDate.parse(search.getCheckin(), formatter);
+        LocalDate checkoutDate = LocalDate.parse(search.getCheckout(), formatter);
+        long stayCount = ChronoUnit.DAYS.between(checkinDate, checkoutDate);
+
+
+        UriComponentsBuilder builder = UriComponentsBuilder.newInstance()
+            .scheme("https")
+            .host("www.jalan.net")
+            .pathSegment(destinationCodes[0], "LRG_" + destinationCodes[1])
+            .path("/")
+            .queryParam("stayYear", search.getCheckin().split("-")[0])
+            .queryParam("stayMonth", search.getCheckin().split("-")[1])
+            .queryParam("stayDay", search.getCheckin().split("-")[2])
+            .queryParam("stayCount", String.valueOf(stayCount)) // Assuming a stay count of 1
+            .queryParam("roomCount", search.getNoRooms())
+            .queryParam("adultNum", search.getGroupAdults())
+            // Add other query parameters as needed
+            .queryParam("minPrice", "0")
+            .queryParam("maxPrice", "999999")
+            .queryParam("mealType", "")
+            .queryParam("kenCd", "020000")
+            .queryParam("lrgCd", "020200")
+            .queryParam("rootCd", "04")
+            .queryParam("distCd", "01")
+            .queryParam("roomCrack", "100000")
+            .queryParam("reShFlg", "1")
+            .queryParam("mvTabFlg", "0")
+            .queryParam("listId", "0")
+            .queryParam("screenId", "UWW1402");
+        String url = builder.toUriString();
         String response = "Jalan search result";
         try {
             Document doc = Jsoup.connect(url).get();
-            String title = doc.title(); // get the title of the page
             response = doc.text(); // get the text of the page
         } catch (IOException e) {
             // Handle the exception
