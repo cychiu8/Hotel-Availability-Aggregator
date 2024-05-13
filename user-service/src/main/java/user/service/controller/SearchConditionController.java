@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import user.service.model.SearchCondition;
@@ -20,12 +21,18 @@ import user.service.service.SearchConditionService;
 
 
 @RestController
+@RequestMapping("/api/v1/searchcondition")
 public class SearchConditionController {
 
     @Autowired
     SearchConditionService searchConditionService;
 
-    @PostMapping
+    @RequestMapping("/")
+    public String home() {
+        return "Hello World! user-service is up and running.";
+    }
+
+    @PostMapping("/condition")
     public ResponseEntity<SearchCondition> createSearchCondition(@Validated @RequestBody SearchCondition newSearchCondition) {
         try {
             SearchCondition createdSearchCondition = searchConditionService.createSearchCondition(newSearchCondition);

@@ -1,4 +1,5 @@
 package user.service.model;
+import java.util.Date;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,8 +19,8 @@ public class SearchCondition {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
     private String dest;
-    private String checkin;
-    private String checkout;
+    private Date checkin;
+    private Date checkout;
     private int groupAdults;
     private int groupChildren;
     private int noRooms;
@@ -42,19 +43,19 @@ public class SearchCondition {
         this.dest = dest;
     }
 
-    public String getCheckin() {
+    public Date getCheckin() {
         return checkin;
     }
 
-    public void setCheckin(String checkin) {
+    public void setCheckin(Date checkin) {
         this.checkin = checkin;
     }
 
-    public String getCheckout() {
+    public Date getCheckout() {
         return checkout;
     }
 
-    public void setCheckout(String checkout) {
+    public void setCheckout(Date checkout) {
         this.checkout = checkout;
     }
 
