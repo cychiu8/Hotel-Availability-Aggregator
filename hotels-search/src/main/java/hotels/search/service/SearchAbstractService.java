@@ -5,4 +5,6 @@ import hotels.search.model.SearchCondition;
 @Service
 public abstract class SearchAbstractService {
     public abstract String getSearchResult(SearchCondition search);
+
+    public abstract String getAllSearchResult();
 }

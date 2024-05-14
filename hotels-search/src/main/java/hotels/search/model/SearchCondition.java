@@ -1,13 +1,26 @@
 package hotels.search.model;
-
+import java.time.LocalDate;
 import java.util.UUID;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import org.hibernate.annotations.GenericGenerator;
 
+@Entity
 public class SearchCondition {
 
+    @Id
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+        name = "UUID",
+        strategy = "org.hibernate.id.UUIDGenerator"
+    )
+    @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
     private String dest;
-    private String checkin;
-    private String checkout;
+    private LocalDate checkin;
+    private LocalDate checkout;
     private int groupAdults;
     private int groupChildren;
     private int noRooms;
@@ -30,19 +43,19 @@ public class SearchCondition {
         this.dest = dest;
     }
 
-    public String getCheckin() {
+    public LocalDate getCheckin() {
         return checkin;
     }
 
-    public void setCheckin(String checkin) {
+    public void setCheckin(LocalDate checkin) {
         this.checkin = checkin;
     }
 
-    public String getCheckout() {
+    public LocalDate getCheckout() {
         return checkout;
     }
 
-    public void setCheckout(String checkout) {
+    public void setCheckout(LocalDate checkout) {
         this.checkout = checkout;
     }
 

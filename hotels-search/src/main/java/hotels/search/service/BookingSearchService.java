@@ -1,7 +1,10 @@
 package hotels.search.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -12,9 +15,26 @@ import hotels.search.model.SearchCondition;
 public class BookingSearchService extends SearchAbstractService {
 
     private final DestinationMappingService destinationMappingService;
+    private final SearchConditionService searchConditionService;
 
-    public BookingSearchService(DestinationMappingService destinationMappingService) {
+
+    public BookingSearchService(DestinationMappingService destinationMappingService, SearchConditionService searchConditionService) {
         this.destinationMappingService = destinationMappingService;
+        this.searchConditionService = searchConditionService;
+    
+    }
+
+
+    @Override
+    public String getAllSearchResult() {
+        List<SearchCondition> conditions = searchConditionService.getAllSearchConditions();
+        List<String> results = new ArrayList<>();
+        for(SearchCondition condition : conditions){
+            String result = getSearchResult(condition);
+            results.add(result);
+        }
+        
+        return results.toString();
     }
 
 
