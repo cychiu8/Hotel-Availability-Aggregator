@@ -3,12 +3,18 @@ package hotels.search.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.web.util.UriComponentsBuilder;
 import hotels.search.model.SearchCondition;
+import hotels.search.model.SearchResult;
 
 
 @Service
@@ -79,13 +85,62 @@ public class BookingSearchService extends SearchAbstractService {
 
         String response = "Booking search result";
         try {
+            LocalDateTime startTime = LocalDateTime.now();
             Document doc = Jsoup.connect(url).get();
-            response = doc.text(); // get the text of the page
+            LocalDateTime endTime = LocalDateTime.now();
+
+            SearchResult result = extractResponse(doc);
+
+            ZoneId zoneId = ZoneId.systemDefault();
+            long startLong = startTime.atZone(zoneId).toInstant().toEpochMilli();
+            long endLong = endTime.atZone(zoneId).toInstant().toEpochMilli();
+            long responseTime = endLong - startLong;
+            
+            result.setExecuteTime(startTime);
+            result.setResponseTime(responseTime);
+            result.setExecuteUrl(url);
+
+            response = result.toString();
         } catch (IOException e) {
             // Handle the exception
             e.printStackTrace();
         }
         
         return response;
+    }
+
+    private SearchResult extractResponse(Document doc) {
+
+        // get result count
+        Element countElement = doc.selectFirst("h1");
+        String numberOfResultsStr = countElement.text().replaceAll("[^0-9]", "");
+        int numberOfResults = Integer.parseInt(numberOfResultsStr);
+
+        // get price
+        Elements priceElements = doc.select("[data-testid=price-and-discounted-price]");
+
+        int[] prices = new int[priceElements.size()];
+        for (int i = 0; i < priceElements.size(); i++) {
+            Element priceElement = priceElements.get(i);
+            String priceStr = priceElement.text().replaceAll("[^0-9]", "");
+            prices[i] = Integer.parseInt(priceStr);
+        }
+
+        int minPrice = Arrays.stream(prices).min().orElse(0);
+        int maxPrice = Arrays.stream(prices).max().orElse(0);
+
+        String words = "Number of results: " + numberOfResults + "\n";
+        words += "Min price: " + minPrice + "\n";
+        words += "Max price: " + maxPrice + "\n";
+        words += Arrays.toString(prices);
+
+        System.out.println(words);
+
+        SearchResult result = new SearchResult();
+        result.setNumberOfResults(numberOfResults);
+        result.setMinPrice(minPrice);
+        result.setMaxPrice(maxPrice);
+        
+        return result;
     }
 }

@@ -2,15 +2,21 @@ package hotels.search.service;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 import hotels.search.model.SearchCondition;
+import hotels.search.model.SearchResult;
 
 @Service
 public class JalanSearchService extends SearchAbstractService{
@@ -71,13 +77,56 @@ public class JalanSearchService extends SearchAbstractService{
         String url = builder.toUriString();
         String response = "Jalan search result";
         try {
+            LocalDateTime startTime = LocalDateTime.now();
             Document doc = Jsoup.connect(url).get();
-            response = doc.text(); // get the text of the page
+            LocalDateTime endTime = LocalDateTime.now();
+
+            SearchResult result = extractResponse(doc);
+
+            ZoneId zoneId = ZoneId.systemDefault();
+            long startLong = startTime.atZone(zoneId).toInstant().toEpochMilli();
+            long endLong = endTime.atZone(zoneId).toInstant().toEpochMilli();
+            long responseTime = endLong - startLong;
+            
+            result.setExecuteTime(startTime);
+            result.setResponseTime(responseTime);
+            result.setExecuteUrl(url);
+
+            response = result.toString();
+
         } catch (IOException e) {
             // Handle the exception
             e.printStackTrace();
         }
         
         return response;
+    }
+
+    private SearchResult extractResponse(Document doc) {
+        // Convert the response to a result entity
+        Elements countElements = doc.select(".jlnpc-listInformation--count");
+        Elements priceElements = doc.select(".p-searchResultItem__lowestPriceValue");
+        int numberOfResults = Integer.parseInt(countElements.text());
+        int[] prices = new int[numberOfResults];
+        for (int i = 0; i < priceElements.size(); i++) {
+            Element priceElement = priceElements.get(i);
+            String priceStr = priceElement.text().replaceAll("[^0-9]", "");
+            prices[i] = Integer.parseInt(priceStr);
+        }
+
+        int minPrice = Arrays.stream(prices).min().orElse(0);
+        int maxPrice = Arrays.stream(prices).max().orElse(0);
+
+        String words = "Number of results: " + numberOfResults + "\n";
+        words += "Min price: " + minPrice + "\n";
+        words += "Max price: " + maxPrice + "\n";
+        words += Arrays.toString(prices);
+
+        SearchResult result = new SearchResult();
+        result.setNumberOfResults(numberOfResults);
+        result.setMinPrice(minPrice);
+        result.setMaxPrice(maxPrice);
+        
+        return result;
     }
 }
