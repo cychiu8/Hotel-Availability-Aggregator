@@ -8,4 +8,4 @@ hotels-search/target/
 .DS_Store
 *.iml
 *.log
-
+.env
