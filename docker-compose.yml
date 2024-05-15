@@ -4,20 +4,19 @@ services:
   db:
     image: postgres
     restart: always
-    environment:
-      POSTGRES_PASSWORD: mysecretpassword
     volumes:
       - ./postgresql/schema:/docker-entrypoint-initdb.d
       - ./postgresql/pgdata:/var/lib/postgresql/data
+    env_file:
+      - ./postgresql/.env
   pgadmin:
     image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: "cychiu8@gmail.com"
-      PGADMIN_DEFAULT_PASSWORD: "admin"
     ports:
       - "5050:80"
     depends_on:
       - db
+    env_file:
+      - ./postgresql/.env
   hotel-search:
     build: ./hotels-search-service/hotels-search
     depends_on:
@@ -26,7 +25,8 @@ services:
       - "8080:8080"
     volumes:
       - ./hotels-search-service/hotels-search/:/app
-  
+    env_file:
+      - ./hotels-search-service/.env
   user-service:
     build: ./user-service/user-service
     depends_on:
@@ -35,3 +35,15 @@ services:
       - "8081:8080"
     volumes:
       - ./user-service/user-service/:/app
+    env_file:
+      - ./user-service/.env
+  notification-service:
+    build: ./notification-service/notification-service
+    depends_on:
+      - db
+    ports:
+      - "8082:8080"
+    volumes:
+      - ./notification-service/notification-service/:/app
+    env_file:
+      - ./notification-service/.env
