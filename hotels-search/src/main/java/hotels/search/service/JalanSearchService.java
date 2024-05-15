@@ -1,10 +1,8 @@
 package hotels.search.service;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,26 +21,28 @@ public class JalanSearchService extends SearchAbstractService{
 
     private final DestinationMappingService destinationMappingService;
     private final SearchConditionService searchConditionService;
+    private final SearchResultService searchResultService;
 
-    public JalanSearchService(DestinationMappingService destinationMappingService, SearchConditionService searchConditionService) {
+    public JalanSearchService(DestinationMappingService destinationMappingService, SearchConditionService searchConditionService, SearchResultService searchResultService) {    
         this.destinationMappingService = destinationMappingService;
         this.searchConditionService = searchConditionService;
+        this.searchResultService = searchResultService;
     }
 
     @Override
-    public String getAllSearchResult() {
+    public List<SearchResult> getAllSearchResult() {
         List<SearchCondition> conditions = searchConditionService.getAllSearchConditions();
-        List<String> results = new ArrayList<>();
+        List<SearchResult> results = new ArrayList<>();
         for(SearchCondition condition : conditions){
-            String result = getSearchResult(condition);
+            SearchResult result = getSearchResultAndSave(condition);
             results.add(result);
         }
         
-        return results.toString();
+        return results;
     }
 
     @Override
-    public String getSearchResult(SearchCondition search) {
+    public SearchResult getSearchResultAndSave(SearchCondition search) {
 
         // String url = "https://www.jalan.net/020000/LRG_020200/?stayYear=2024&stayMonth=5&stayDay=12&stayCount=1&roomCount=1&adultNum=1&minPrice=0&maxPrice=999999&mealType=&kenCd=020000&lrgCd=020200&rootCd=04&distCd=01&roomCrack=100000&reShFlg=1&mvTabFlg=0&listId=0&screenId=UWW1402";
         
@@ -75,13 +75,16 @@ public class JalanSearchService extends SearchAbstractService{
             .queryParam("listId", "0")
             .queryParam("screenId", "UWW1402");
         String url = builder.toUriString();
-        String response = "Jalan search result";
+        SearchResult result = new SearchResult();
+        
         try {
             LocalDateTime startTime = LocalDateTime.now();
             Document doc = Jsoup.connect(url).get();
             LocalDateTime endTime = LocalDateTime.now();
 
-            SearchResult result = extractResponse(doc);
+            result = extractResponse(doc);
+
+            result.setSearchCondition(search);
 
             ZoneId zoneId = ZoneId.systemDefault();
             long startLong = startTime.atZone(zoneId).toInstant().toEpochMilli();
@@ -92,14 +95,15 @@ public class JalanSearchService extends SearchAbstractService{
             result.setResponseTime(responseTime);
             result.setExecuteUrl(url);
 
-            response = result.toString();
+            searchResultService.saveSearchResult(result);
 
         } catch (IOException e) {
             // Handle the exception
             e.printStackTrace();
+            throw new RuntimeException("An error occurred while extracting the response", e);
         }
         
-        return response;
+        return result;
     }
 
     private SearchResult extractResponse(Document doc) {
