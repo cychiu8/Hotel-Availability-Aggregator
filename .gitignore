@@ -8,3 +8,5 @@ user-service/target/
 .DS_Store
 *.iml
 *.log
+
+.env
