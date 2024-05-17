@@ -118,13 +118,15 @@ public class BookingSearchService extends SearchAbstractService {
             // get result count
             Element countElement = doc.selectFirst("h1");
             if (countElement == null) {
-                result.setNumberOfResults(numberOfResults);
-                result.setMinPrice(minPrice);
-                result.setMaxPrice(maxPrice);
-                return result;
+                return createResultWithDefaults();
             }
 
             String numberOfResultsStr = countElement.text().replaceAll("[^0-9]", "");
+            if (numberOfResultsStr.isEmpty() || numberOfResultsStr == "0"
+                    || numberOfResultsStr.equals("")) {
+                return createResultWithDefaults();
+            }
+
             numberOfResults = Integer.parseInt(numberOfResultsStr);
 
             // get price
@@ -143,6 +145,17 @@ public class BookingSearchService extends SearchAbstractService {
             e.printStackTrace();
             throw new RuntimeException("An error occurred while parsing the HTML", e);
         }
+        result.setNumberOfResults(numberOfResults);
+        result.setMinPrice(minPrice);
+        result.setMaxPrice(maxPrice);
+        return result;
+    }
+
+    private SearchResult createResultWithDefaults() {
+        SearchResult result = new SearchResult();
+        int numberOfResults = 0;
+        int minPrice = 0;
+        int maxPrice = 0;
         result.setNumberOfResults(numberOfResults);
         result.setMinPrice(minPrice);
         result.setMaxPrice(maxPrice);
