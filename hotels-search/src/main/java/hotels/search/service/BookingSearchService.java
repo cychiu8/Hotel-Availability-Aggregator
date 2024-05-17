@@ -19,15 +19,15 @@ import hotels.search.model.SearchResult;
 @Service
 public class BookingSearchService extends SearchAbstractService {
 
-    private final DestinationMappingService destinationMappingService;
+    private final DestinationMapService destinationMapService;
     private final SearchConditionService searchConditionService;
     private final SearchResultService searchResultService;
 
 
-    public BookingSearchService(DestinationMappingService destinationMappingService,
+    public BookingSearchService(DestinationMapService destinationMapService,
             SearchConditionService searchConditionService,
             SearchResultService searchResultService) {
-        this.destinationMappingService = destinationMappingService;
+        this.destinationMapService = destinationMapService;
         this.searchConditionService = searchConditionService;
         this.searchResultService = searchResultService;
     }
@@ -49,7 +49,8 @@ public class BookingSearchService extends SearchAbstractService {
     @Override
     public SearchResult getSearchResultAndSave(SearchCondition search) {
 
-        String destinationId = destinationMappingService.getBookingDestinationId(search.getDest());
+        String destinationId =
+                destinationMapService.getDestinationMapById(search.getDest()).getBookingId();
 
         UriComponentsBuilder builder = UriComponentsBuilder.newInstance().scheme("https")
                 .host("www.booking.com").path("/searchresults.zh-tw.html")

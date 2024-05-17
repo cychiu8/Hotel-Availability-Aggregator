@@ -19,14 +19,14 @@ import hotels.search.model.SearchResult;
 @Service
 public class JalanSearchService extends SearchAbstractService {
 
-    private final DestinationMappingService destinationMappingService;
+    private final DestinationMapService destinationMapService;
     private final SearchConditionService searchConditionService;
     private final SearchResultService searchResultService;
 
-    public JalanSearchService(DestinationMappingService destinationMappingService,
+    public JalanSearchService(DestinationMapService destinationMapService,
             SearchConditionService searchConditionService,
             SearchResultService searchResultService) {
-        this.destinationMappingService = destinationMappingService;
+        this.destinationMapService = destinationMapService;
         this.searchConditionService = searchConditionService;
         this.searchResultService = searchResultService;
     }
@@ -46,31 +46,28 @@ public class JalanSearchService extends SearchAbstractService {
     @Override
     public SearchResult getSearchResultAndSave(SearchCondition search) {
 
-        // String url =
-        // "https://www.jalan.net/020000/LRG_020200/?stayYear=2024&stayMonth=5&stayDay=12&stayCount=1&roomCount=1&adultNum=1&minPrice=0&maxPrice=999999&mealType=&kenCd=020000&lrgCd=020200&rootCd=04&distCd=01&roomCrack=100000&reShFlg=1&mvTabFlg=0&listId=0&screenId=UWW1402";
-
-        String[] destinationCodes =
-                destinationMappingService.getJalanDestinationCodes(search.getDest());
         long stayCount = ChronoUnit.DAYS.between(search.getCheckin(), search.getCheckout());
+        String kenId =
+                destinationMapService.getDestinationMapById(search.getDest()).getJalanKenId();
+        String lrgId =
+                destinationMapService.getDestinationMapById(search.getDest()).getJalanLrgId();
 
-
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.newInstance().scheme("https").host("www.jalan.net")
-                        .pathSegment(destinationCodes[0], "LRG_" + destinationCodes[1]).path("/")
-                        .queryParam("stayYear", search.getCheckin().getYear())
-                        .queryParam("stayMonth", search.getCheckin().getMonthValue())
-                        .queryParam("stayDay", search.getCheckin().getDayOfMonth())
-                        .queryParam("stayCount", String.valueOf(stayCount)) // Assuming a stay count
-                                                                            // of 1
-                        .queryParam("roomCount", search.getNoRooms())
-                        .queryParam("adultNum", search.getGroupAdults())
-                        // Add other query parameters as needed
-                        .queryParam("minPrice", "0").queryParam("maxPrice", "999999")
-                        .queryParam("mealType", "").queryParam("kenCd", "020000")
-                        .queryParam("lrgCd", "020200").queryParam("rootCd", "04")
-                        .queryParam("distCd", "01").queryParam("roomCrack", "100000")
-                        .queryParam("reShFlg", "1").queryParam("mvTabFlg", "0")
-                        .queryParam("listId", "0").queryParam("screenId", "UWW1402");
+        UriComponentsBuilder builder = UriComponentsBuilder.newInstance().scheme("https")
+                .host("www.jalan.net").pathSegment(kenId, "LRG_" + lrgId).path("/")
+                .queryParam("stayYear", search.getCheckin().getYear())
+                .queryParam("stayMonth", search.getCheckin().getMonthValue())
+                .queryParam("stayDay", search.getCheckin().getDayOfMonth())
+                .queryParam("stayCount", String.valueOf(stayCount)) // Assuming a stay count
+                                                                    // of 1
+                .queryParam("roomCount", search.getNoRooms())
+                .queryParam("adultNum", search.getGroupAdults())
+                // Add other query parameters as needed
+                .queryParam("minPrice", "0").queryParam("maxPrice", "999999")
+                .queryParam("mealType", "").queryParam("kenCd", kenId).queryParam("lrgCd", lrgId)
+                .queryParam("rootCd", "04").queryParam("distCd", "01")
+                .queryParam("roomCrack", "100000").queryParam("reShFlg", "1")
+                .queryParam("mvTabFlg", "0").queryParam("listId", "0")
+                .queryParam("screenId", "UWW1402");
         String url = builder.toUriString();
         SearchResult result = new SearchResult();
 
