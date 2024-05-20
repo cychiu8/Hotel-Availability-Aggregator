@@ -1,4 +1,5 @@
 package user.service.controller;
+
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +34,11 @@ public class SearchConditionController {
     }
 
     @PostMapping("/condition")
-    public ResponseEntity<SearchCondition> createSearchCondition(@Validated @RequestBody SearchCondition newSearchCondition) {
+    public ResponseEntity<SearchCondition> createSearchCondition(
+            @Validated @RequestBody SearchCondition newSearchCondition) {
         try {
-            SearchCondition createdSearchCondition = searchConditionService.createSearchCondition(newSearchCondition);
+            SearchCondition createdSearchCondition =
+                    searchConditionService.createSearchCondition(newSearchCondition);
             return new ResponseEntity<>(createdSearchCondition, HttpStatus.CREATED);
         } catch (Exception e) {
             System.err.println(e.getMessage());
@@ -57,7 +60,8 @@ public class SearchConditionController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SearchCondition> updateSearchCondition(@PathVariable UUID id, @Validated @RequestBody SearchCondition updatedSearchCondition) {
+    public ResponseEntity<SearchCondition> updateSearchCondition(@PathVariable UUID id,
+            @Validated @RequestBody SearchCondition updatedSearchCondition) {
         try {
             updatedSearchCondition.setId(id);
             searchConditionService.updateSearchCondition(updatedSearchCondition);
@@ -84,7 +88,8 @@ public class SearchConditionController {
         // Log the exception, you can use any logging framework
         System.err.println(e.getMessage());
 
-        // Return a response entity with a status of 500 (Internal Server Error) and the exception message as the body
+        // Return a response entity with a status of 500 (Internal Server Error) and the exception
+        // message as the body
         return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

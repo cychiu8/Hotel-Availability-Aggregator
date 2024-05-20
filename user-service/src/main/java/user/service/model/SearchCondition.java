@@ -1,7 +1,6 @@
 package user.service.model;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
