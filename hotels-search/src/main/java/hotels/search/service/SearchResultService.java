@@ -1,7 +1,6 @@
 package hotels.search.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,11 +26,6 @@ public class SearchResultService {
     public List<SearchResult> getAllSearchResults() {
         return searchResultRepository.findAll();
     }
-
-    // @Transactional(readOnly = true)
-    // public Optional<SearchResult> getSearchResultByConditionId(UUID id) {
-    //     return searchResultRepository.findByConditionId(id);
-    // }
 
     @Transactional
     public SearchResult updateSearchResult(SearchResult updatedSearchResult) {

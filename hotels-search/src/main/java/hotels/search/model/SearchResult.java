@@ -1,6 +1,5 @@
 package hotels.search.model;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import javax.persistence.Column;
@@ -16,10 +15,7 @@ public class SearchResult {
 
     @Id
     @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-        name = "UUID",
-        strategy = "org.hibernate.id.UUIDGenerator"
-    )
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
@@ -108,16 +104,11 @@ public class SearchResult {
     public void setSearchCondition(SearchCondition searchCondition) {
         this.searchCondition = searchCondition;
     }
-    
+
     @Override
     public String toString() {
-        return "SearchResult{" +
-            "executeTime=" + executeTime +
-            ", responseTime=" + responseTime +
-            ", numberOfResults=" + numberOfResults +
-            ", minPrice=" + minPrice +
-            ", maxPrice=" + maxPrice +
-            ", executeUrl='" + executeUrl + '\'' +
-            '}';
+        return "SearchResult{" + "executeTime=" + executeTime + ", responseTime=" + responseTime
+                + ", numberOfResults=" + numberOfResults + ", minPrice=" + minPrice + ", maxPrice="
+                + maxPrice + ", executeUrl='" + executeUrl + '\'' + '}';
     }
 }
