@@ -33,6 +33,9 @@ public class NotificationService {
         @Value("${kafka.topic.name}")
         private String topicName;
 
+        @Value("${notification.type}")
+        private String notificationType;
+
         public NotificationService() {}
 
         @PostConstruct
@@ -61,10 +64,14 @@ public class NotificationService {
                                 dest, checkin, checkout, results, minPrice, maxPrice, url,
                                 executeTime);
 
-                sendByApi(message + "\n" + "by API");
-
-                sendByKafka(message + "\n" + "by Kafka");
-
+                if (notificationType.equals("api")) {
+                        sendByApi(message + "\n" + "by API");
+                } else if (notificationType.equals("kafka")) {
+                        sendByKafka(message + "\n" + "by Kafka");
+                } else {
+                        sendByApi(message + "\n" + "by API");
+                        sendByKafka(message + "\n" + "by Kafka");
+                }
                 logger.info("notification sent");
         }
 
