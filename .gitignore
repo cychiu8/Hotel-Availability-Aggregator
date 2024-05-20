@@ -8,4 +8,5 @@ notificatino-service/target/
 .DS_Store
 *.iml
 *.log
+*.lst
 .env
