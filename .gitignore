@@ -4,6 +4,8 @@
 hotels-search/target/
 .vscode/
 notificatino-service/target/
+.vscode/
+user-service/target/
 
 *.class
 *.jar
@@ -14,4 +16,6 @@ notificatino-service/target/
 *.log
 .env
 *.lst
+.env
+
 .env
