@@ -4,5 +4,3 @@ WORKDIR /app
 COPY . /app/
 
 CMD ["mvn","spring-boot:run"]
-
-# CMD ["tail", "-f", "/dev/null"]

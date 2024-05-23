@@ -75,9 +75,6 @@ public class NotificationService {
         }
 
         public void sendByKafka(String message) {
-                kafkaTemplate.send("notification", message);
-                logger.info("notification sent by kafka");
-
                 // Send the message to the topic
                 ListenableFuture<SendResult<String, String>> future =
                                 kafkaTemplate.send(topicName, message);
