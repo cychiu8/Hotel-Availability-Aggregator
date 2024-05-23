@@ -1,21 +1,16 @@
-/postgresql/pgdata/*
+.vscode/
 .env
-.vscode/
+.DS_Store
+
+/postgresql/pgdata/*
 hotels-search/target/
-.vscode/
 notificatino-service/target/
-.vscode/
 user-service/target/
 
 *.class
 *.jar
 *.war
 *.ear
-.DS_Store
 *.iml
 *.log
-.env
 *.lst
-.env
-
-.env

@@ -18,38 +18,35 @@ services:
     env_file:
       - ./postgresql/.env
   hotel-search:
-    build: ./hotels-search-service/hotels-search
+    build: ./hotels-search
     depends_on:
       - db
     ports:
       - "8080:8080"
     volumes:
-      - ./hotels-search-service/hotels-search/:/app
+      - ./hotels-search/:/app
     env_file:
-      - ./hotels-search-service/.env
-    # command: ["tail", "-f", "/dev/null"]
+      - ./hotels-search/.env
   user-service:
-    build: ./user-service/user-service
+    build: ./user-service
     depends_on:
       - db
     ports:
       - "8081:8080"
     volumes:
-      - ./user-service/user-service/:/app
+      - ./user-service/:/app
     env_file:
       - ./user-service/.env
-    # command: ["tail", "-f", "/dev/null"]
   notification-service:
-    build: ./notification-service/notification-service
+    build: ./notification-service
     depends_on:
       - db
     ports:
       - "8082:8080"
     volumes:
-      - ./notification-service/notification-service/:/app
+      - ./notification-service/:/app
     env_file:
       - ./notification-service/.env
-    # command: ["tail", "-f", "/dev/null"]
   zookeeper:
     image: zookeeper:3.7.0
     restart: always
