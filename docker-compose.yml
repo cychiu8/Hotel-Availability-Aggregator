@@ -27,7 +27,7 @@ services:
       - ./hotels-search-service/hotels-search/:/app
     env_file:
       - ./hotels-search-service/.env
-    command: ["tail", "-f", "/dev/null"]
+    # command: ["tail", "-f", "/dev/null"]
   user-service:
     build: ./user-service/user-service
     depends_on:
@@ -38,7 +38,7 @@ services:
       - ./user-service/user-service/:/app
     env_file:
       - ./user-service/.env
-    command: ["tail", "-f", "/dev/null"]
+    # command: ["tail", "-f", "/dev/null"]
   notification-service:
     build: ./notification-service/notification-service
     depends_on:
@@ -49,9 +49,10 @@ services:
       - ./notification-service/notification-service/:/app
     env_file:
       - ./notification-service/.env
-    command: ["tail", "-f", "/dev/null"]
+    # command: ["tail", "-f", "/dev/null"]
   zookeeper:
     image: zookeeper:3.7.0
+    restart: always
     ports:
       - "2181:2181"
 
@@ -59,6 +60,7 @@ services:
     image: confluentinc/cp-kafka:latest
     depends_on:
       - zookeeper
+    restart: always
     ports:
       - "9092:9092"
     environment:
