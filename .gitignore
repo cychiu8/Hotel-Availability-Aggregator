@@ -2,6 +2,8 @@
 .env
 .vscode/
 hotels-search/target/
+.vscode/
+notificatino-service/target/
 
 *.class
 *.jar
@@ -10,4 +12,6 @@ hotels-search/target/
 .DS_Store
 *.iml
 *.log
+.env
+*.lst
 .env
