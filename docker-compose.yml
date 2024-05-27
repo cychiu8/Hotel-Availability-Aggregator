@@ -47,6 +47,7 @@ services:
       - ./notification-service/:/app
     env_file:
       - ./notification-service/.env
+    # command: ["tail", "-f", "/dev/null"]
   zookeeper:
     image: zookeeper:3.7.0
     restart: always

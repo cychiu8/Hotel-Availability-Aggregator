@@ -25,7 +25,7 @@ public class LineMessageController {
         try {
             logger.info("recived message ... ", message);
             logger.info("sending message ... ");
-            lineMessageService.sendMessage(message);
+            lineMessageService.sendMessageByBiz(message);
             logger.info("message sent successfully");
             return new ResponseEntity<>(null, HttpStatus.OK);
         } catch (Exception e) {
